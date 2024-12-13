@@ -16,10 +16,11 @@ from fastapi import (
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from PIL import Image
-from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from libs.database import get_db
-from libs.models import Video
+from libs.models import Base, Video
 from libs.services import face_detection
 from libs.services.face_detection_helpers import (
     process_frame,
@@ -42,6 +43,11 @@ app.add_middleware(
 DATABASE_URL = os.getenv(
     "DATABASE_URL", "sqlite:///:memory:"
 )  # Use in-memory SQLite for testing
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Create tables
+Base.metadata.create_all(bind=engine)
 
 
 @app.websocket("/ws/process_stream_feed/")
