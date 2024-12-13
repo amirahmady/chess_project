@@ -10,8 +10,9 @@ const WebcamStream = () => {
   const intervalIdRef = useRef(null);
   const navigate = useNavigate();
 
-  const websocketUrl = process.env.REACT_APP_API_BASE_URL+'/ws/process_stream_feed/' || 'ws://localhost:8000/ws/process_stream_feed/';
-
+  console.log('REACT_APP_API_BASE_URL:', process.env.REACT_APP_API_BASE_URL);
+  const websocketUrl = (process.env.REACT_APP_API_BASE_URL ? process.env.REACT_APP_API_BASE_URL.replace('http', 'ws') : 'ws://localhost:8000') + '/ws/process_stream_feed/';
+  console.log('websocketUrl:', websocketUrl);
   const startStreaming = () => {
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => {
